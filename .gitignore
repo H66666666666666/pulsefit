@@ -25,3 +25,14 @@ dist/
 # Claude/OMC
 .claude/
 .omc/
+
+# AI-generated / temporary files
+database/
+test_*.py
+
+# Nginx deployment (not part of source)
+nginx/
+*.log
+
+# Sensitive config
+src/main/resources/application-prod.yml
