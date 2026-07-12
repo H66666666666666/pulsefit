@@ -1,6 +1,6 @@
-# vue-tlias-management
+# PulseFit Frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+Vue 3 + Element Plus 连锁健身俱乐部运营管理前端。
 
 ## Recommended IDE Setup
 
