@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itbin.mapper.StaffExperienceMapper">
+    <insert id="addStaffExperience">
+        insert into pf_staff_experience(staff_id, begin, end, company, position) values
+        <foreach collection="experienceList" item="exp" separator=",">
+            (#{exp.staffId}, #{exp.begin}, #{exp.end}, #{exp.company}, #{exp.position})
+        </foreach>
+    </insert>
+</mapper>

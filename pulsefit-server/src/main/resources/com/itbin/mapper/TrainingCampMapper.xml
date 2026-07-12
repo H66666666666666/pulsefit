@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itbin.mapper.TrainingCampMapper">
+    <insert id="add">
+        insert into pf_training_camp(name, venue, start_date, end_date, head_coach_id, program_type, create_time, update_time)
+        values(#{name}, #{venue}, #{startDate}, #{endDate}, #{headCoachId}, #{programType}, #{createTime}, #{updateTime})
+    </insert>
+
+    <update id="update">
+        update pf_training_camp set
+        name = #{name},
+        venue = #{venue},
+        start_date = #{startDate},
+        end_date = #{endDate},
+        head_coach_id = #{headCoachId},
+        program_type = #{programType},
+        update_time = #{updateTime}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from pf_training_camp where id = #{id}
+    </delete>
+
+    <select id="list" resultType="com.itbin.pojo.TrainingCamp">
+        select
+            ptc.*,
+            ps.name as headCoachName,
+            case
+                when DATE(NOW()) &lt; DATE(ptc.start_date) THEN '招募中'
+                when DATE(NOW()) > DATE(ptc.end_date) THEN '已结束'
+                ELSE '进行中'
+            END as status
+        from pf_training_camp ptc
+        left join pf_staff ps on ps.id = ptc.head_coach_id
+        <where>
+            <if test="name != null">
+                ptc.name like concat('%', #{name}, '%')
+            </if>
+            <if test="begin != null and end != null">
+                and ptc.start_date between #{begin} and #{end}
+            </if>
+        </where>
+        order by ptc.update_time desc
+    </select>
+
+    <select id="findById" resultType="com.itbin.pojo.TrainingCamp">
+        select * from pf_training_camp where id = #{id}
+    </select>
+
+    <select id="findAll" resultType="com.itbin.pojo.TrainingCamp">
+        select * from pf_training_camp
+    </select>
+</mapper>

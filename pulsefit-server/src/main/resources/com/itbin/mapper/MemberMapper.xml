@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itbin.mapper.MemberMapper">
+    <insert id="add">
+        insert into pf_member(name, member_no, gender, phone, id_card, referral_channel, address, membership_level, membership_date, training_camp_id, create_time, update_time)
+        values(#{name}, #{memberNo}, #{gender}, #{phone}, #{idCard}, #{referralChannel}, #{address}, #{membershipLevel}, #{membershipDate}, #{trainingCampId}, #{createTime}, #{updateTime})
+    </insert>
+
+    <update id="update">
+        update pf_member
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="memberNo != null and memberNo != ''">
+                member_no = #{memberNo},
+            </if>
+            <if test="gender != null">
+                gender = #{gender},
+            </if>
+            <if test="phone != null and phone != ''">
+                phone = #{phone},
+            </if>
+            <if test="idCard != null and idCard != ''">
+                id_card = #{idCard},
+            </if>
+            <if test="referralChannel != null">
+                referral_channel = #{referralChannel},
+            </if>
+            <if test="address != null and address != ''">
+                address = #{address},
+            </if>
+            <if test="membershipLevel != null">
+                membership_level = #{membershipLevel},
+            </if>
+            <if test="membershipDate != null">
+                membership_date = #{membershipDate},
+            </if>
+            <if test="trainingCampId != null">
+                training_camp_id = #{trainingCampId},
+            </if>
+            <if test="serviceAlertCount != null">
+                service_alert_count = #{serviceAlertCount},
+            </if>
+            <if test="riskPoints != null">
+                risk_points = #{riskPoints},
+            </if>
+            update_time = #{updateTime}
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMemberById">
+        delete from pf_member where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="countMembersByCampId" resultType="java.lang.Integer">
+        select count(*) from pf_member where training_camp_id = #{campId}
+    </select>
+
+    <select id="list" resultType="com.itbin.pojo.Member">
+        select pm.*, ptc.id trainingCampId, ptc.name trainingCampName
+        from pf_member pm
+        left join pf_training_camp ptc on pm.training_camp_id = ptc.id
+        <where>
+            <if test="name != null">
+                pm.name like concat('%', #{name}, '%')
+            </if>
+            <if test="membershipLevel != null">
+                and pm.membership_level = #{membershipLevel}
+            </if>
+            <if test="trainingCampId != null">
+                and pm.training_camp_id = #{trainingCampId}
+            </if>
+        </where>
+        order by pm.update_time desc
+    </select>
+
+    <select id="findById" resultType="com.itbin.pojo.Member">
+        select * from pf_member where id = #{id}
+    </select>
+
+    <!-- Camp member distribution stats -->
+    <select id="countCampMemberData" resultType="java.util.Map">
+        SELECT
+            ptc.name AS campName,
+            COUNT(pm.id) AS num
+        FROM pf_training_camp ptc
+        LEFT JOIN pf_member pm ON ptc.id = pm.training_camp_id
+        GROUP BY ptc.id, ptc.name
+        ORDER BY ptc.id
+    </select>
+
+    <!-- Membership level distribution stats -->
+    <select id="countMembershipLevelData" resultType="java.util.Map">
+        select
+            membership_level as name,
+            count(*) value
+        from pf_member
+        group by membership_level
+    </select>
+</mapper>

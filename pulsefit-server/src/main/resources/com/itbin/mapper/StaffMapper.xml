@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itbin.mapper.StaffMapper">
+    <update id="updateById">
+        update pf_staff
+        <set>
+            <if test="username != null and username !=''">username = #{username},</if>
+            <if test="password != null and password!=''">password = #{password},</if>
+            <if test="name != null and name!=''">name = #{name},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="phone != null and phone!=''">phone = #{phone},</if>
+            <if test="role != null">role = #{role},</if>
+            <if test="salary != null">salary = #{salary},</if>
+            <if test="image != null and image!=''">image = #{image},</if>
+            <if test="entryDate != null">entry_date = #{entryDate},</if>
+            <if test="departmentId != null">department_id = #{departmentId},</if>
+            update_time = #{updateTime}
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStaffById">
+        delete from pf_staff where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteStaffExperienceById">
+        delete from pf_staff_experience where staff_id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="list" resultType="com.itbin.pojo.Staff">
+        select ps.*, pd.name departmentName
+        from pf_staff ps
+        left join pf_department pd on ps.department_id = pd.id
+        <where>
+            <if test="name != null">
+                ps.name like concat('%',#{name},'%')
+            </if>
+            <if test="gender != null">
+                and ps.gender = #{gender}
+            </if>
+            <if test="begin != null and end != null">
+                and ps.entry_date between #{begin} and #{end}
+            </if>
+        </where>
+        order by ps.update_time desc
+    </select>
+
+    <resultMap id="staffResultMap" type="com.itbin.pojo.Staff">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="name" column="name"/>
+        <result property="gender" column="gender"/>
+        <result property="phone" column="phone"/>
+        <result property="role" column="role"/>
+        <result property="salary" column="salary"/>
+        <result property="image" column="image"/>
+        <result property="entryDate" column="entry_date"/>
+        <result property="departmentId" column="department_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <collection property="experienceList" ofType="com.itbin.pojo.StaffExperience">
+            <id property="id" column="se_id"/>
+            <result property="staffId" column="se_staff_id"/>
+            <result property="begin" column="se_begin"/>
+            <result property="end" column="se_end"/>
+            <result property="company" column="se_company"/>
+            <result property="position" column="se_position"/>
+        </collection>
+    </resultMap>
+
+    <select id="findById" resultMap="staffResultMap">
+        select ps.*,
+               se.id se_id,
+               se.staff_id se_staff_id,
+               se.begin se_begin,
+               se.end se_end,
+               se.company se_company,
+               se.position se_position
+        from pf_staff ps
+        left join pf_staff_experience se on ps.id = se.staff_id
+        where ps.id = #{id}
+    </select>
+
+    <!-- Role distribution stats -->
+    <select id="countStaffRoleData" resultType="java.util.Map">
+        select
+            role as pos,
+            count(*) num
+        from pf_staff
+        group by role
+        order by num
+    </select>
+
+    <select id="countStaffGenderData" resultType="java.util.Map">
+        select
+            if(gender=1,'男','女') name,
+            count(*) value
+        from pf_staff
+        group by gender
+    </select>
+
+    <select id="findAll" resultType="com.itbin.pojo.Staff">
+        select * from pf_staff
+    </select>
+
+    <select id="getUsernameAndPassword" resultType="com.itbin.pojo.Staff">
+        select id, username, name from pf_staff where username = #{username} and password = #{password}
+    </select>
+</mapper>
