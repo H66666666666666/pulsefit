@@ -1,0 +1,27 @@
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Java
+**/target/
+*.class
+
+# Node
+node_modules/
+dist/
+
+# Environment
+.env
+.env.local
+
+# Logs
+**/logs/
+
+# Claude/OMC
+.claude/
+.omc/

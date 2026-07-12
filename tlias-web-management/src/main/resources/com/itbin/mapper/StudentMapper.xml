@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itbin.mapper.StudentMapper">
+    <insert id="add">
+        insert into student(name,no,gender,phone,id_card,is_college,address,degree,graduation_date,clazz_id,create_time,update_time)
+        values(#{name},#{no},#{gender},#{phone},#{idCard},#{isCollege},#{address},#{degree},#{graduationDate},#{clazzId},#{createTime},#{updateTime})
+    </insert>
+
+    <update id="update">
+        update student
+        <set>
+            <if test="name != null and name!=''">
+                name = #{name},
+            </if>
+            <if test="no != null and no!=''">
+                no = #{no},
+            </if>
+            <if test="gender != null">
+                gender = #{gender},
+            </if>
+            <if test="phone != null and phone!=''">
+                phone = #{phone},
+            </if>
+            <if test="idCard != null and idCard!=''">
+                id_card = #{idCard},
+            </if>
+            <if  test="isCollege != null">
+                is_college = #{isCollege},
+            </if>
+            <if test="address != null and address!=''">
+                address = #{address},
+            </if>
+            <if test="degree != null and degree">
+                degree = #{degree},
+            </if>
+            <if test="graduationDate != null">
+                graduation_date = #{graduationDate},
+            </if>
+            <if test="clazzId != null">
+                clazz_id = #{clazzId},
+            </if>
+            <if test="violationCount != null">
+                violation_count = #{violationCount},
+            </if>
+            <if test="violationScore != null">
+                violation_score = #{violationScore},
+            </if>
+            update_time = #{updateTime}
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStudentById">
+      delete from student where id in
+          <foreach collection="ids" item="id" separator="," open="(" close=")" >
+              #{id}
+          </foreach>
+    </delete>
+    <!--    <resultMap id="studentResultMap" type="com.itbin.pojo.Student">-->
+<!--        <id property="id" column="clazzId"/>-->
+<!--    </resultMap>-->
+
+    <select id="countStudentsByClazzId" resultType="java.lang.Integer">
+        select count(*) from student where clazz_id = #{clazzId}
+    </select>
+
+    <select id="list" resultType="com.itbin.pojo.Student">
+        select s.* ,s.degree ,c.id clazzId,c.name clazzName from student s left join clazz c on s.clazz_id = c.id
+        <where>
+            <if test="name != null">
+                s.name like concat('%',#{name},'%')
+            </if>
+            <if test="degree!=null">
+                and degree=#{degree}
+            </if>
+            <if test="clazzId!=null">
+                and clazz_id= #{clazzId}
+            </if>
+        </where>
+        order by s.update_time desc
+    </select>
+
+    <select id="findByid" resultType="com.itbin.pojo.Student">
+        select * from student where id = #{id}
+    </select>
+
+
+
+    <select id="countStudentCountData" resultType="java.util.Map">
+        SELECT
+            c.name AS clazzName,  -- 班级名称（对应响应中的clazzList）
+            COUNT(s.id) AS num  -- 班级人数（对应响应中的dataList）
+        FROM
+            clazz c  -- 班级表
+                LEFT JOIN
+            student s ON c.id = s.clazz_id  -- 关联学生表（通过班级ID）
+        GROUP BY
+            c.id, c.`name`  -- 按班级ID和名称分组（确保每个班级唯一）
+        ORDER BY
+            c.id;  -- 按班级ID排序，保证返回顺序固定（与响应示例的顺序一致）
+    </select>
+    <select id="countStudentDegreeData" resultType="java.util.Map">
+        select
+            (case degree when 1 then '初中'
+                    when 2 then '高中'
+                    when 3 then '大专'
+                    when 4 then '本科'
+                    when 5 then '硕士'
+                    else '博士'  end) name,
+            count(*) value
+        from student group by degree
+    </select>
+</mapper>
