@@ -7,6 +7,18 @@ const request =axios.create({
   timeout:600000
 })
 
+//axios的请求拦截器：自动携带token
+request.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('pulsefit_token')
+    if (token) {
+      config.headers['token'] = token
+    }
+    return config
+  },
+  (error) => Promise.reject(error)
+)
+
 //axios的响应 response 拦截器
 request.interceptors.response.use(
   (response) => { //成功回调

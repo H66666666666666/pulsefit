@@ -3,14 +3,14 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const sysRole = ref('COACH')
+const sysRole = ref('')
 const userName = ref('')
 
 onMounted(() => {
   const userStr = localStorage.getItem('pulsefit_user')
   if (userStr) {
     const user = JSON.parse(userStr)
-    sysRole.value = user.sysRole || 'COACH'
+    sysRole.value = user.sysRole || ''
     userName.value = user.name || user.username
   }
 })
@@ -20,8 +20,6 @@ const logout = () => {
   localStorage.removeItem('pulsefit_user')
   router.push('/login')
 }
-
-const isAdmin = () => sysRole.value === 'SUPER_ADMIN' || sysRole.value === 'ADMIN'
 </script>
 
 <template>
@@ -49,16 +47,16 @@ const isAdmin = () => sysRole.value === 'SUPER_ADMIN' || sysRole.value === 'ADMI
               <el-menu-item index="/departments">运营部门</el-menu-item>
               <el-menu-item index="/staff">教练与员工</el-menu-item>
             </el-sub-menu>
-            <el-sub-menu index="/course-mgmt" v-if="isAdmin()">
+            <el-sub-menu index="/course-mgmt">
               <template #title>课程排班</template>
               <el-menu-item index="/courses">课程管理</el-menu-item>
               <el-menu-item index="/training-camps">训练营</el-menu-item>
             </el-sub-menu>
-            <el-sub-menu index="/equipment-mgmt" v-if="isAdmin()">
+            <el-sub-menu index="/equipment-mgmt">
               <template #title>器材管理</template>
               <el-menu-item index="/equipment">器材台账</el-menu-item>
             </el-sub-menu>
-            <el-sub-menu index="/finance-mgmt" v-if="sysRole === 'SUPER_ADMIN'">
+            <el-sub-menu index="/finance-mgmt">
               <template #title>财务统计</template>
               <el-menu-item index="/finances">收支管理</el-menu-item>
             </el-sub-menu>

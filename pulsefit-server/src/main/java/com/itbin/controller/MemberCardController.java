@@ -5,6 +5,7 @@ import com.itbin.pojo.CheckinLog;
 import com.itbin.pojo.MemberCard;
 import com.itbin.pojo.Result;
 import com.itbin.mapper.CheckinLogMapper;
+import com.itbin.mapper.MemberCardMapper;
 import com.itbin.service.MemberCardService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,24 @@ public class MemberCardController {
     @Autowired
     private CheckinLogMapper checkinLogMapper;
 
+    @Autowired
+    private MemberCardMapper memberCardMapper;
+
+    @GetMapping("/list")
+    public Result list() {
+        return Result.success(memberCardMapper.findAll());
+    }
+
     @GetMapping
     public Result getByMember(Integer memberId) {
-        MemberCard card = memberCardService.findByMemberId(memberId);
-        return Result.success(card);
+        if (memberId == null) {
+            return Result.success(memberCardMapper.findAll());
+        }
+        MemberCard card = memberCardMapper.findByMemberId(memberId);
+        if (card != null) {
+            return Result.success(card);
+        }
+        return Result.success(null);
     }
 
     @Log
@@ -43,5 +58,11 @@ public class MemberCardController {
     @GetMapping("/checkin-logs")
     public Result checkinLogs(Integer memberId) {
         return Result.success(checkinLogMapper.listByMember(memberId));
+    }
+
+    @PutMapping("/{id}/deduct")
+    public Result deduct(@PathVariable Integer id) {
+        memberCardMapper.deductTimes(id);
+        return Result.success();
     }
 }

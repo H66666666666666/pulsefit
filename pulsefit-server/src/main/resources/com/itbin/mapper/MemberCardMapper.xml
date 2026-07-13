@@ -11,6 +11,10 @@
         values(#{memberId}, #{memberName}, #{cardType}, #{totalTimes}, #{remainingTimes}, #{expireDate}, 'ACTIVE', now(), now())
     </insert>
 
+    <select id="findAll" resultType="com.itbin.pojo.MemberCard">
+        select * from pf_member_card order by member_id
+    </select>
+
     <update id="update">
         update pf_member_card
         <set>
