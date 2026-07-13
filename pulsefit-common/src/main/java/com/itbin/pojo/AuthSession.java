@@ -11,5 +11,6 @@ public class AuthSession {
     private Integer id;
     private String username;
     private String name;
+    private String sysRole;
     private String token;
 }

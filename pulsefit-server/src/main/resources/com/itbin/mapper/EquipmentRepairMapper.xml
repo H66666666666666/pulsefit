@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itbin.mapper.EquipmentRepairMapper">
+
+    <select id="list" resultType="com.itbin.pojo.EquipmentRepair">
+        select * from pf_equipment_repair
+        <where>
+            <if test="equipmentId != null">
+                equipment_id = #{equipmentId}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <insert id="add">
+        insert into pf_equipment_repair(equipment_id, equipment_no, equipment_name, reporter_id, reporter_name, fault_desc, report_time, status, create_time, update_time)
+        values(#{equipmentId}, #{equipmentNo}, #{equipmentName}, #{reporterId}, #{reporterName}, #{faultDesc}, now(), 'REPORTED', now(), now())
+    </insert>
+
+    <update id="audit">
+        update pf_equipment_repair set audit_status = #{auditStatus}, audit_time = now(), auditor_name = #{auditorName}, status = #{status}, update_time = now() where id = #{id}
+    </update>
+
+    <update id="startRepair">
+        update pf_equipment_repair set repair_start_time = now(), status = 'REPAIRING', update_time = now() where id = #{id}
+    </update>
+
+    <update id="finishRepair">
+        update pf_equipment_repair set repair_end_time = now(), repair_desc = #{repairDesc}, repair_cost = #{repairCost}, status = 'FIXED', update_time = now() where id = #{id}
+    </update>
+
+</mapper>

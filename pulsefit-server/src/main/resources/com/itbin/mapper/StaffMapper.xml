@@ -12,6 +12,7 @@
             <if test="gender != null">gender = #{gender},</if>
             <if test="phone != null and phone!=''">phone = #{phone},</if>
             <if test="role != null">role = #{role},</if>
+            <if test="sysRole != null">sys_role = #{sysRole},</if>
             <if test="salary != null">salary = #{salary},</if>
             <if test="image != null and image!=''">image = #{image},</if>
             <if test="entryDate != null">entry_date = #{entryDate},</if>
@@ -61,6 +62,7 @@
         <result property="gender" column="gender"/>
         <result property="phone" column="phone"/>
         <result property="role" column="role"/>
+        <result property="sysRole" column="sys_role"/>
         <result property="salary" column="salary"/>
         <result property="image" column="image"/>
         <result property="entryDate" column="entry_date"/>
@@ -113,6 +115,6 @@
     </select>
 
     <select id="getUsernameAndPassword" resultType="com.itbin.pojo.Staff">
-        select id, username, name from pf_staff where username = #{username} and password = #{password}
+        select id, username, name, sys_role from pf_staff where username = #{username} and password = #{password}
     </select>
 </mapper>

@@ -25,6 +25,7 @@ public class Staff {
     private Integer gender; // 1:男, 2:女
     private String phone;
     private String role; // 主教练, 助理教练, 运营主管, 课程顾问, 门店经理
+    private String sysRole; // 系统角色: SUPER_ADMIN / ADMIN / COACH
     private Integer salary;
     private String image;
     private LocalDate entryDate;

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itbin.mapper.EquipmentMapper">
+
+    <select id="list" resultType="com.itbin.pojo.Equipment">
+        select * from pf_equipment
+        <where>
+            <if test="keyword != null and keyword != ''">
+                equipment_name like concat('%', #{keyword}, '%') or equipment_no like concat('%', #{keyword}, '%')
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="findById" resultType="com.itbin.pojo.Equipment">
+        select * from pf_equipment where id = #{id}
+    </select>
+
+    <insert id="add">
+        insert into pf_equipment(equipment_no, equipment_name, category, purchase_date, status, location, create_time, update_time)
+        values(#{equipmentNo}, #{equipmentName}, #{category}, #{purchaseDate}, 'NORMAL', #{location}, now(), now())
+    </insert>
+
+    <update id="update">
+        update pf_equipment
+        <set>
+            <if test="equipmentName != null">equipment_name = #{equipmentName},</if>
+            <if test="category != null">category = #{category},</if>
+            <if test="location != null">location = #{location},</if>
+            <if test="status != null">status = #{status},</if>
+            update_time = now()
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="updateStatus">
+        update pf_equipment set status = #{status}, update_time = now() where id = #{id}
+    </update>
+
+</mapper>

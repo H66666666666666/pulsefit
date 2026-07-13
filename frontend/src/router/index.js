@@ -1,36 +1,56 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import IndexView from '../views/index/index.vue'
-import ClazzView from '../views/clazz/index.vue'
-import DeptView from '../views/dept/index.vue'
-import EmpView from '../views/emp/index.vue'
-import LogView from '../views/log/index.vue'
-import LoginView from '../views/login/index.vue'
-import StuView from '../views/stu/index.vue'
-import EmpReportView from '../views/report/emp/index.vue'
-import StuReportView from '../views/report/stu/index.vue'
 import LayoutView from '../views/layout/index.vue'
+import LoginView from '../views/login/index.vue'
+import IndexView from '../views/index/index.vue'
+import DepartmentsView from '../views/departments/index.vue'
+import StaffView from '../views/staff/index.vue'
+import MembersView from '../views/members/index.vue'
+import TrainingCampsView from '../views/training-camps/index.vue'
+import OperationLogsView from '../views/operation-logs/index.vue'
+import AnalyticsStaffView from '../views/analytics/staff/index.vue'
+import AnalyticsMembersView from '../views/analytics/members/index.vue'
+import CoursesView from '../views/courses/index.vue'
+import BookingsView from '../views/bookings/index.vue'
+import MemberCardsView from '../views/member-cards/index.vue'
+import EquipmentView from '../views/equipment/index.vue'
+import FinancesView from '../views/finances/index.vue'
+
+const routes = [
+  {
+    path: '/',
+    component: LayoutView,
+    redirect: '/index',
+    children: [
+      { path: '/index', name: 'index', component: IndexView },
+      { path: '/departments', name: 'departments', component: DepartmentsView },
+      { path: '/staff', name: 'staff', component: StaffView },
+      { path: '/members', name: 'members', component: MembersView },
+      { path: '/training-camps', name: 'trainingCamps', component: TrainingCampsView },
+      { path: '/operation-logs', name: 'operationLogs', component: OperationLogsView },
+      { path: '/analytics/staff', name: 'analyticsStaff', component: AnalyticsStaffView },
+      { path: '/analytics/members', name: 'analyticsMembers', component: AnalyticsMembersView },
+      { path: '/courses', name: 'courses', component: CoursesView },
+      { path: '/bookings', name: 'bookings', component: BookingsView },
+      { path: '/member-cards', name: 'memberCards', component: MemberCardsView },
+      { path: '/equipment', name: 'equipment', component: EquipmentView },
+      { path: '/finances', name: 'finances', component: FinancesView },
+    ]
+  },
+  { path: '/login', name: 'login', component: LoginView }
+]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/',
-      name: '',
-      component: LayoutView,
-      redirect: '/login', // 添加重定向到 /index
-      children: [
-        { path: '/index', name: 'index', component: IndexView }
-        , { path: '/clazz', name: 'clazz', component: ClazzView }
-        , { path: '/dept', name: 'dept', component: DeptView }
-        , { path: '/emp', name: 'emp', component: EmpView }
-        , { path: '/log', name: 'log', component: LogView }
-        , { path: '/empReport', name: 'empReport', component: EmpReportView }
-        , { path: '/stu', name: 'stu', component: StuView }
-        , { path: '/stuReport', name: 'stuReport', component: StuReportView }
-      ]
-    },
-    { path: '/login', name: 'login', component: LoginView }
-  ]
+  routes
+})
+
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('pulsefit_token')
+  if (to.path !== '/login' && !token) {
+    next('/login')
+  } else {
+    next()
+  }
 })
 
 export default router

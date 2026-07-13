@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itbin.mapper.CheckinLogMapper">
+
+    <insert id="add">
+        insert into pf_checkin_log(member_id, member_name, card_id, checkin_time, course_id, course_name, times_consumed, remaining_after, create_time)
+        values(#{memberId}, #{memberName}, #{cardId}, now(), #{courseId}, #{courseName}, #{timesConsumed}, #{remainingAfter}, now())
+    </insert>
+
+    <select id="listByMember" resultType="com.itbin.pojo.CheckinLog">
+        select * from pf_checkin_log where member_id = #{memberId} order by checkin_time desc
+    </select>
+
+</mapper>

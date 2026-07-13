@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itbin.mapper.FinanceRecordMapper">
+
+    <select id="list" resultType="com.itbin.pojo.FinanceRecord">
+        select * from pf_finance_record
+        <where>
+            <if test="type != null and type != ''">
+                record_type = #{type}
+            </if>
+            <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+                and record_date between #{startDate} and #{endDate}
+            </if>
+        </where>
+        order by record_date desc, create_time desc
+    </select>
+
+    <insert id="add">
+        insert into pf_finance_record(record_type, category, amount, description, related_id, record_date, create_time)
+        values(#{recordType}, #{category}, #{amount}, #{description}, #{relatedId}, #{recordDate}, now())
+    </insert>
+
+    <select id="summary" resultType="java.util.Map">
+        select record_type as name, sum(amount) as value
+        from pf_finance_record
+        <where>
+            <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+                record_date between #{startDate} and #{endDate}
+            </if>
+        </where>
+        group by record_type
+    </select>
+
+</mapper>

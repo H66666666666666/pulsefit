@@ -89,9 +89,11 @@ public class StaffServiceImpl implements StaffService {
             Map<String, Object> claims = new HashMap<>();
             claims.put("id", staffLogin.getId());
             claims.put("username", staffLogin.getUsername());
+            claims.put("sysRole", staffLogin.getSysRole() != null ? staffLogin.getSysRole() : "COACH");
             String jwt = JwtUtils.generateToken(claims);
 
-            return new AuthSession(staffLogin.getId(), staffLogin.getUsername(), staffLogin.getName(), jwt);
+            return new AuthSession(staffLogin.getId(), staffLogin.getUsername(), staffLogin.getName(),
+                    staffLogin.getSysRole(), jwt);
         }
         return null;
     }

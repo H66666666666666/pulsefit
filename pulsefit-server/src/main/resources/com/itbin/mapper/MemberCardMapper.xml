@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itbin.mapper.MemberCardMapper">
+
+    <select id="findByMemberId" resultType="com.itbin.pojo.MemberCard">
+        select * from pf_member_card where member_id = #{memberId}
+    </select>
+
+    <insert id="add">
+        insert into pf_member_card(member_id, member_name, card_type, total_times, remaining_times, expire_date, status, create_time, update_time)
+        values(#{memberId}, #{memberName}, #{cardType}, #{totalTimes}, #{remainingTimes}, #{expireDate}, 'ACTIVE', now(), now())
+    </insert>
+
+    <update id="update">
+        update pf_member_card
+        <set>
+            <if test="cardType != null">card_type = #{cardType},</if>
+            <if test="totalTimes != null">total_times = #{totalTimes},</if>
+            <if test="remainingTimes != null">remaining_times = #{remainingTimes},</if>
+            <if test="expireDate != null">expire_date = #{expireDate},</if>
+            <if test="status != null">status = #{status},</if>
+            update_time = now()
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="deductTimes">
+        update pf_member_card set remaining_times = remaining_times - 1, update_time = now() where id = #{id} and remaining_times > 0
+    </update>
+
+</mapper>
