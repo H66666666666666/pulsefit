@@ -8,6 +8,7 @@ import java.util.List;
 @Mapper
 public interface EquipmentRepairMapper {
     List<EquipmentRepair> list(@Param("equipmentId") Integer equipmentId);
+    EquipmentRepair findById(@Param("id") Integer id);
     void add(EquipmentRepair repair);
     void audit(EquipmentRepair repair);
     void startRepair(EquipmentRepair repair);

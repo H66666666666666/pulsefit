@@ -25,6 +25,7 @@ dist/
 # Claude/OMC
 .claude/
 .omc/
+.agents/
 
 # AI-generated / temporary files
 database/
